@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 const Pet = require('../module/petModel');
 const { v4: uuidv4 } = require('uuid');
-
+const upload = require('../middleware/uploadImg')
   
+
+
+
 router.post('/pet', async(req,res)=>{
     
     try{
@@ -130,9 +133,40 @@ router.post('/pet/:id',async (req,res) =>{
 
         res.status(200).json(pet);
     } catch (error){
-        console.log(error)
         res.status(500).json({ message: 'Internal server error'});
     }
 });
+
+// Define the route handler for uploading an image
+router.post('/pet/:petId/uploadImage', upload.single('image'), async (req, res) => {
+    const { petId } = req.params;
+    const { additionalMetadata } = req.body;
+    try {
+      const pet = await Pet.findOne({ id:petId });
+  
+      if (!pet) {
+        return res.status(404).json({ message: 'Pet not found' });
+      }
+  
+      const { filename, path } = req.file;
+  
+    
+      const fs = require('fs');
+      const destinationPath = `uploads/${filename}`;
+      fs.renameSync(path, destinationPath);
+  
+     
+      res.status(200).json({
+        message: `Image uploaded successfully for pet with ID: ${petId}`,
+        additionalMetadata: additionalMetadata,
+        filename: filename,
+        path: destinationPath
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
 
 module.exports = router;
