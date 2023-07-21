@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Pet = require('../module/petModel');
+const Pet = require('../module/pet.model');
 const { v4: uuidv4 } = require('uuid');
 const upload = require('../middleware/uploadImg')
   
@@ -75,7 +75,7 @@ router.delete('/pet/:id',async (req,res)=>{
     const pet = await Pet.findOneAndDelete({ id });
 
     if(!pet){
-        return res.status(404).json({
+        return res.status(401).json({
             code:1,
             type:'error',
             message:'Pet not found'
@@ -96,7 +96,7 @@ router.put('/pet',async (req,res) =>{
     try{
         const {id, updatePetData} = req.body;
 
-        const pet = await Prt.findOneAndUpdate(id, updatePetData, {new:true});
+        const pet = await Pet.findOneAndUpdate(id, updatePetData, {new:true});
 
         if(!pet){
             return res.status(404).json({

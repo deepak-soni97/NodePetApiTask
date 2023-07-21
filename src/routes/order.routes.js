@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const StoreOrder = require('../module/petStoreModel');
+const StoreOrder = require('../module/order.Model');
 const { v4: uuidv4 } = require('uuid');
 
 router.post('/store/order', async(req,res) =>{
